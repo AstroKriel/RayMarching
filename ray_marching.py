@@ -46,11 +46,10 @@ class Circle:
         self.shape = tmp_shape
 
 class Camera:
-    def __init__(self, pos_x, pos_y, ray_L, ray_ang_range, ray_count):
+    def __init__(self, pos_x, pos_y, ray_ang_range, ray_count):
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.radius = 1/8
-        self.ray_L = ray_L # not necessary
         self.ray_ang_range = ray_ang_range
         self.ray_count = ray_count
     def draw_rays(self, ax, objs, max_iter):
@@ -61,7 +60,7 @@ class Camera:
             ray_y = self.pos_y
             tot_L = 0
             while (True):
-                L = min([obj.dist_to_point((ray_x, ray_y)) if (obj.dist_to_point((ray_x, ray_y)) < self.ray_L) else self.ray_L for obj in objs])
+                L = min([obj.dist_to_point((ray_x, ray_y)) for obj in objs])
                 tmp_shape = plt.Circle((ray_x, ray_y), L, edgecolor="b", facecolor="None", linewidth=1/2, alpha=0.1)
                 # ax.add_patch(tmp_shape)
                 if ((L < 10**(-1)) or tmp_iter > max_iter):
@@ -72,8 +71,8 @@ class Camera:
                 tmp_iter += 1
             if not(tmp_iter > max_iter):
                 plt.plot([self.pos_x, self.pos_x+tot_L*cos(ang)], [self.pos_y, self.pos_y+tot_L*sin(ang)], color="b", linewidth=1/2, alpha=0.25)
-            else:
-                plt.plot([self.pos_x, self.pos_x+tot_L*cos(ang)], [self.pos_y, self.pos_y+tot_L*sin(ang)], color="r", linewidth=1/2, alpha=0.1)
+            # else:
+            #     plt.plot([self.pos_x, self.pos_x+tot_L*cos(ang)], [self.pos_y, self.pos_y+tot_L*sin(ang)], color="r", linewidth=1/2, alpha=0.1)
     def draw_shape(self, ax):
         tmp_shape = plt.Circle((self.pos_x, self.pos_y), self.radius, edgecolor="k", facecolor="k")
         ax.add_patch(tmp_shape)
@@ -91,9 +90,9 @@ if __name__ == "__main__":
     rectangle.draw(ax)
     circle.draw(ax)
     ## create camera
-    cam = Camera(-10, 0, 10, (pi*5/2, pi*3/2), 100)
+    cam = Camera(-10, 0, (pi*5/2, pi*3/2), 2*10**2)
     cam.draw_shape(ax)
-    cam.draw_rays(ax, (square, rectangle, circle), 100)
+    cam.draw_rays(ax, (square, rectangle, circle), 10)
     ## show plot
     ax.axis('equal')
     ax.autoscale()
